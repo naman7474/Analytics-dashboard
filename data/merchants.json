@@ -1,0 +1,20 @@
+[
+  {
+    "name": "Aqualogica",
+    "domain": "aqualogica.in",
+    "storeDomain": "store.aqualogica.in",
+    "shopify": {
+      "shop": "aqualogicaprod.myshopify.com"
+    },
+    "posthog": {
+      "projectId": "309136"
+    },
+    "gokwik": {
+      "merchantMid": "19g6jlvw89r6r"
+    },
+    "ratioTag": "primathon",
+    "viewerEmails": [],
+    "id": "20064371-75d2-404d-944a-4ad9b895cec0",
+    "createdAt": "2026-03-23T10:35:44.355Z"
+  }
+]
