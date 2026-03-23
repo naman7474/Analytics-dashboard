@@ -1,36 +1,65 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# A/B Dashboard
 
-## Getting Started
+Internal analytics dashboard for comparing Shopify (A) vs Ratio (B).
 
-First, run the development server:
+## Auth and Access
+
+- Google sign-in is required for the app.
+- Any user with an email ending in `@primathon.in` gets `admin` access.
+- All other signed-in users are `viewer`s.
+- Viewer access is merchant-specific and is configured per merchant through `viewerEmails`.
+
+## Local Setup
+
+1. Install dependencies:
+
+```bash
+npm install
+```
+
+2. Copy the environment template:
+
+```bash
+cp .env.example .env.local
+```
+
+3. Fill in:
+
+- `GOOGLE_CLIENT_ID`
+- `GOOGLE_CLIENT_SECRET`
+- `NEXTAUTH_SECRET`
+- `NEXTAUTH_URL`
+- `CRUX_API_KEY` (optional)
+- `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` if you want merchant data in Supabase
+
+4. Start the app:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Merchant Data
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- Safe merchant metadata lives in `data/merchants.json`.
+- Server-only vendor credentials live in `data/merchant-secrets.local.json`.
+- `data/merchant-secrets.local.json` is gitignored and should not be committed.
+- If `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` are set, the app uses Supabase instead of local JSON files.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Supabase Migration
 
-## Learn More
+1. Run the SQL in `supabase/migrations/20260323_create_merchant_store.sql`.
+2. Set `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` in `.env.local`.
+3. Sync the current local merchant files into Supabase:
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+npm run sync:merchants:supabase
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+4. Restart the app. Merchant reads and writes will now use Supabase automatically.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Notes
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Existing credentials that were previously committed should be rotated.
+- Do not use the Supabase anon key for the merchant store. The app needs the server-only service role key because merchant secrets are stored in the database.
+- The performance tab uses CrUX for the live Shopify website and PostHog for Ratio.
+- If `CRUX_API_KEY` is not set, the app falls back to PageSpeed Insights origin field data.
