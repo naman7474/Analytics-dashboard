@@ -28,11 +28,17 @@ export function useDashboardData() {
 
   // Shopify sessions (variant A — sessions NOT on store.domain)
   const { data: shopifySessions, isLoading: loadingSessions } = useSWR(
-    enabled ? `/api/shopify/sessions?${params}` : null,
+    enabled ? `/api/shopify/sessions?${params}&variant=shopify` : null,
     fetcher
   );
 
-  // PostHog funnel (variant B — sessions ON store.domain)
+  // Shopify sessions (variant B — sessions ON store.domain)
+  const { data: ratioSessions, isLoading: loadingRatioSessions } = useSWR(
+    enabled ? `/api/shopify/sessions?${params}&variant=ratio` : null,
+    fetcher
+  );
+
+  // PostHog funnel (variant B — checkout + orders from PostHog)
   const { data: posthogFunnel, isLoading: loadingFunnel } = useSWR(
     enabled ? `/api/posthog/funnel?${params}` : null,
     fetcher
@@ -58,6 +64,7 @@ export function useDashboardData() {
 
   const isLoading =
     loadingSessions ||
+    loadingRatioSessions ||
     loadingFunnel ||
     loadingGokwikCheckout ||
     loadingGokwikOrders ||
@@ -68,6 +75,7 @@ export function useDashboardData() {
 
   if (
     shopifySessions?.data &&
+    ratioSessions?.data &&
     posthogFunnel?.data &&
     gokwikOrders?.data
   ) {
@@ -83,16 +91,18 @@ export function useDashboardData() {
       0
     );
 
-    // ── Variant B: PostHog funnel ──
-    const posthogData = posthogFunnel.data;
-    const totalRatioSessions = posthogData.reduce(
+    // ── Variant B: Sessions & ATC from Shopify, checkout & orders from PostHog ──
+    const ratioSessionsData = ratioSessions.data;
+    const totalRatioSessions = ratioSessionsData.reduce(
       (s: number, d: { sessions: number }) => s + d.sessions,
       0
     );
-    const totalRatioATC = posthogData.reduce(
-      (s: number, d: { sessionsWithAtc: number }) => s + d.sessionsWithAtc,
+    const totalRatioATC = ratioSessionsData.reduce(
+      (s: number, d: { sessionsWithCartAdditions: number }) =>
+        s + d.sessionsWithCartAdditions,
       0
     );
+    const posthogData = posthogFunnel.data;
     const totalRatioCheckout = posthogData.reduce(
       (s: number, d: { sessionsWithCheckout: number }) =>
         s + d.sessionsWithCheckout,
@@ -200,11 +210,15 @@ export function useDashboardData() {
       dateMap.get(d.date)!.shopifySessions = d.sessions;
     }
 
+    for (const d of ratioSessionsData) {
+      if (!dateMap.has(d.date)) dateMap.set(d.date, emptyDay());
+      dateMap.get(d.date)!.ratioSessions = d.sessions;
+    }
+
+    // Ratio daily orders from PostHog
     for (const d of posthogData) {
       if (!dateMap.has(d.date)) dateMap.set(d.date, emptyDay());
-      const entry = dateMap.get(d.date)!;
-      entry.ratioSessions = d.sessions;
-      entry.ratioOrders = d.totalOrders;
+      dateMap.get(d.date)!.ratioOrders = d.totalOrders;
     }
 
     for (const date of Object.keys(gokwikDailyOrders)) {

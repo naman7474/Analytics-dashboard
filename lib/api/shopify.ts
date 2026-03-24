@@ -74,16 +74,21 @@ function toShopifyQLDates(from: string, to: string): { since: string; until: str
 
 /**
  * Fetch sessions data from Shopify using ShopifyQL.
- * Filters OUT sessions that land on store.{domain} (those are Ratio sessions).
+ * variant "shopify" = landing_page_url NOT CONTAINS storeDomain
+ * variant "ratio"   = landing_page_url CONTAINS storeDomain
  */
 export async function fetchShopifySessions(
   merchant: MerchantConfig,
   from: string,
-  to: string
+  to: string,
+  variant: "shopify" | "ratio" = "shopify"
 ): Promise<ShopifySessionData[]> {
   const { since, until } = toShopifyQLDates(from, to);
+  const urlFilter = variant === "ratio"
+    ? `landing_page_url CONTAINS '${merchant.storeDomain}'`
+    : `landing_page_url NOT CONTAINS '${merchant.storeDomain}'`;
 
-  const query = `FROM sessions SHOW online_store_visitors, sessions, sessions_with_cart_additions WHERE human_or_bot_session IN ('human') AND landing_page_url NOT CONTAINS '${merchant.storeDomain}' TIMESERIES day WITH TOTALS SINCE ${since} UNTIL ${until} ORDER BY day ASC LIMIT 1000`;
+  const query = `FROM sessions SHOW online_store_visitors, sessions, sessions_with_cart_additions WHERE human_or_bot_session IN ('human') AND ${urlFilter} TIMESERIES day WITH TOTALS SINCE ${since} UNTIL ${until} ORDER BY day ASC LIMIT 1000`;
 
   const result = await executeShopifyQL(merchant, query);
   const tableData = result?.data?.shopifyqlQuery?.tableData;

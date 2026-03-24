@@ -14,10 +14,12 @@ export async function GET(req: NextRequest) {
   }
 
   try {
+    const variant = new URL(req.url).searchParams.get("variant") === "ratio" ? "ratio" : "shopify";
     const data = await fetchShopifySessions(
       merchantResult.merchant,
       params.from,
-      params.to
+      params.to,
+      variant
     );
     return NextResponse.json({ data });
   } catch (e: unknown) {
