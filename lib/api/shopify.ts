@@ -468,7 +468,7 @@ export async function fetchShopifyOrdersExtended(
               }
             }
             discountCodes
-            totalDiscountSet { shopMoney { amount } }
+            currentTotalDiscountsSet { shopMoney { amount } }
             paymentGatewayNames
             customer { numberOfOrders }
           }
@@ -511,7 +511,7 @@ export async function fetchShopifyOrdersExtended(
 
       // Discount
       const discountCodes = (node.discountCodes || []) as string[];
-      const discountSet = node.totalDiscountSet as { shopMoney?: { amount?: string } } | undefined;
+      const discountSet = node.currentTotalDiscountsSet as { shopMoney?: { amount?: string } } | undefined;
       const discountAmount = parseFloat(discountSet?.shopMoney?.amount || "0");
       if (discountCodes.length > 0 || discountAmount > 0) {
         ordersWithDiscount++;
