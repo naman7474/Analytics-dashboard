@@ -34,7 +34,7 @@ export default async function RootLayout({
     >
       <body className="min-h-full bg-zinc-50 dark:bg-zinc-950">
         {user ? (
-          <Providers>
+          <Providers role={user.role}>
             <AppShell isAdmin={user.role === "admin"} user={user}>
               {children}
             </AppShell>

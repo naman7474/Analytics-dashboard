@@ -3,10 +3,12 @@
 import { useState, useEffect, useCallback, ReactNode } from "react";
 import { MerchantContext } from "@/lib/hooks/use-merchant";
 import { DateRangeContext } from "@/lib/hooks/use-date-range";
-import { MerchantSummary, DateRange } from "@/lib/types";
+import { UserContext } from "@/lib/hooks/use-user";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { MerchantSummary, DateRange, AppRole } from "@/lib/types";
 import { addDaysToISODate, getISTToday } from "@/lib/ist-date";
 
-export function Providers({ children }: { children: ReactNode }) {
+export function Providers({ children, role = "viewer" }: { children: ReactNode; role?: AppRole }) {
   const today = getISTToday();
   const [merchants, setMerchants] = useState<MerchantSummary[]>([]);
   const [selectedMerchantId, setSelectedMerchantId] = useState<string>("");
@@ -54,6 +56,7 @@ export function Providers({ children }: { children: ReactNode }) {
     merchants.find((m) => m.id === selectedMerchantId) || null;
 
   return (
+    <UserContext.Provider value={{ role }}>
     <MerchantContext.Provider
       value={{
         merchants,
@@ -64,8 +67,11 @@ export function Providers({ children }: { children: ReactNode }) {
       }}
     >
       <DateRangeContext.Provider value={{ dateRange, setDateRange }}>
-        {children}
+        <TooltipProvider delay={300}>
+          {children}
+        </TooltipProvider>
       </DateRangeContext.Provider>
     </MerchantContext.Provider>
+    </UserContext.Provider>
   );
 }

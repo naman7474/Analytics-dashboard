@@ -242,6 +242,34 @@ export interface PerformanceData {
   unit: string;
 }
 
+// Session performance metrics from ShopifyQL (per variant)
+export interface SessionMetrics {
+  daily: {
+    date: string;
+    pagesPerSession: number;
+    bounceRate: number;
+    avgSessionDuration: number;
+  }[];
+  totals: {
+    pagesPerSession: number;
+    bounceRate: number;
+    avgSessionDuration: number;
+  };
+  deviceSplit: { device: string; sessions: number }[];
+}
+
+// Extended order metrics (per variant)
+export interface ExtendedOrderMetrics {
+  totalOrders: number;
+  itemsPerOrder: number;
+  discountUsageRate: number; // 0-100
+  avgDiscountAmount: number;
+  prepaidOrders: number;
+  codOrders: number;
+  newCustomerOrders: number;
+  returningCustomerOrders: number;
+}
+
 // API response wrapper
 export interface ApiResponse<T> {
   data: T;
