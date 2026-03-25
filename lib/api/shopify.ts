@@ -469,7 +469,6 @@ export async function fetchShopifyOrdersExtended(
             }
             discountCodes
             currentTotalDiscountsSet { shopMoney { amount } }
-            paymentGatewayNames
             customer { numberOfOrders }
           }
         }
@@ -518,13 +517,11 @@ export async function fetchShopifyOrdersExtended(
         totalDiscountAmount += discountAmount;
       }
 
-      // Payment method
-      const gateways = (node.paymentGatewayNames || []) as string[];
-      const isCOD = gateways.some(
-        (g) => g.toLowerCase().includes("cod") || g.toLowerCase().includes("cash on delivery")
-      );
-      if (isCOD) codOrders++;
-      else prepaidOrders++;
+      // Payment method — determined by tags
+      const tags = ((node.tags || []) as string[]).map((t) => t.toLowerCase());
+      if (tags.includes("cod")) codOrders++;
+      else if (tags.includes("prepaid")) prepaidOrders++;
+      else prepaidOrders++; // default to prepaid if neither tag present
 
       // New vs returning
       const customer = node.customer as { numberOfOrders?: number } | undefined;
