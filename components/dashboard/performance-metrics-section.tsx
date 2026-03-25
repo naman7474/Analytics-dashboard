@@ -38,16 +38,16 @@ function TrendChart({
     <div className="h-[220px] sm:h-[300px]">
       <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
         <LineChart data={formattedData} margin={{ top: 5, right: 5, left: 0, bottom: 5 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#e4e4e7" />
+          <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
           <XAxis
             dataKey="date"
-            tick={{ fontSize: 10, fill: "#a1a1aa" }}
+            tick={{ fontSize: 10, fill: "#9ca3af" }}
             tickLine={false}
-            axisLine={{ stroke: "#e4e4e7" }}
+            axisLine={{ stroke: "#e5e7eb" }}
             interval="preserveStartEnd"
           />
           <YAxis
-            tick={{ fontSize: 10, fill: "#a1a1aa" }}
+            tick={{ fontSize: 10, fill: "#9ca3af" }}
             tickLine={false}
             axisLine={false}
             tickFormatter={formatValue}
@@ -56,7 +56,7 @@ function TrendChart({
           <Tooltip
             contentStyle={{
               borderRadius: "8px",
-              border: "1px solid #e4e4e7",
+              border: "1px solid #e5e7eb",
               fontSize: "12px",
             }}
             formatter={(value, name) => [
@@ -114,12 +114,12 @@ function ComparisonRow({
   const ratioWins = lowerIsBetter ? ratioValue < shopifyValue : ratioValue > shopifyValue;
 
   return (
-    <tr className="border-b border-zinc-100 last:border-0">
-      <td className="py-2.5 pr-4 text-xs font-medium text-zinc-600 sm:text-sm">{label}</td>
-      <td className={`py-2.5 px-4 text-right text-xs tabular-nums sm:text-sm ${shopifyWins ? "font-semibold text-blue-600" : "text-zinc-500"}`}>
+    <tr className="border-b border-gray-100 last:border-0">
+      <td className="py-2.5 pr-4 text-xs font-medium text-gray-600 sm:text-sm">{label}</td>
+      <td className={`py-2.5 px-4 text-right text-xs tabular-nums sm:text-sm ${shopifyWins ? "font-semibold text-blue-600" : "text-gray-500"}`}>
         {fmt(shopifyValue)}
       </td>
-      <td className={`py-2.5 pl-4 text-right text-xs tabular-nums sm:text-sm ${ratioWins ? "font-semibold text-emerald-600" : "text-zinc-500"}`}>
+      <td className={`py-2.5 pl-4 text-right text-xs tabular-nums sm:text-sm ${ratioWins ? "font-semibold text-emerald-600" : "text-gray-500"}`}>
         {fmt(ratioValue)}
       </td>
     </tr>
@@ -152,19 +152,19 @@ function SplitTable({
 
   return (
     <div>
-      <h4 className="mb-2 text-xs font-semibold text-zinc-500 sm:text-sm">{title}</h4>
+      <h4 className="mb-2 text-xs font-semibold text-gray-500 sm:text-sm">{title}</h4>
       <div className="overflow-x-auto">
         <table className="w-full text-left">
           <thead>
-            <tr className="border-b border-zinc-200">
-              <th className="pb-2 pr-4 text-[10px] font-medium uppercase tracking-wider text-zinc-400 sm:text-xs" />
-              <th className="pb-2 px-4 text-right text-[10px] font-medium uppercase tracking-wider text-zinc-400 sm:text-xs" colSpan={2}>
+            <tr className="border-b border-gray-200">
+              <th className="pb-2 pr-4 text-[10px] font-medium uppercase tracking-wider text-gray-400 sm:text-xs" />
+              <th className="pb-2 px-4 text-right text-[10px] font-medium uppercase tracking-wider text-gray-400 sm:text-xs" colSpan={2}>
                 <span className="inline-flex items-center gap-1.5">
                   <span className="h-1.5 w-1.5 rounded-full bg-blue-500 inline-block" />
                   Shopify
                 </span>
               </th>
-              <th className="pb-2 pl-4 text-right text-[10px] font-medium uppercase tracking-wider text-zinc-400 sm:text-xs" colSpan={2}>
+              <th className="pb-2 pl-4 text-right text-[10px] font-medium uppercase tracking-wider text-gray-400 sm:text-xs" colSpan={2}>
                 <span className="inline-flex items-center gap-1.5">
                   <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 inline-block" />
                   Ratio
@@ -179,20 +179,20 @@ function SplitTable({
               const sPct = shopifyTotal > 0 ? (sVal / shopifyTotal) * 100 : 0;
               const rPct = ratioTotal > 0 ? (rVal / ratioTotal) * 100 : 0;
               return (
-                <tr key={label} className="border-b border-zinc-50 last:border-0">
-                  <td className="py-2 pr-4 text-xs font-medium text-zinc-600 sm:text-sm capitalize">
+                <tr key={label} className="border-b border-gray-50 last:border-0">
+                  <td className="py-2 pr-4 text-xs font-medium text-gray-600 sm:text-sm capitalize">
                     {label}
                   </td>
-                  <td className="py-2 px-2 text-right text-xs tabular-nums text-zinc-500 sm:text-sm">
+                  <td className="py-2 px-2 text-right text-xs tabular-nums text-gray-500 sm:text-sm">
                     {sVal.toLocaleString("en-IN")}
                   </td>
-                  <td className="py-2 px-2 text-right text-[10px] tabular-nums text-zinc-400 sm:text-xs">
+                  <td className="py-2 px-2 text-right text-[10px] tabular-nums text-gray-400 sm:text-xs">
                     ({sPct.toFixed(1)}%)
                   </td>
-                  <td className="py-2 px-2 text-right text-xs tabular-nums text-zinc-500 sm:text-sm">
+                  <td className="py-2 px-2 text-right text-xs tabular-nums text-gray-500 sm:text-sm">
                     {rVal.toLocaleString("en-IN")}
                   </td>
-                  <td className="py-2 pl-2 text-right text-[10px] tabular-nums text-zinc-400 sm:text-xs">
+                  <td className="py-2 pl-2 text-right text-[10px] tabular-nums text-gray-400 sm:text-xs">
                     ({rPct.toFixed(1)}%)
                   </td>
                 </tr>
@@ -238,8 +238,8 @@ export function PerformanceMetricsSection({ comparison }: { comparison: ABCompar
     return (
       <Card>
         <CardContent className="flex items-center justify-center py-12">
-          <Loader2 className="h-5 w-5 animate-spin text-zinc-400" />
-          <span className="ml-2 text-sm text-zinc-400">Loading performance metrics...</span>
+          <Loader2 className="h-5 w-5 animate-spin text-gray-400" />
+          <span className="ml-2 text-sm text-gray-400">Loading performance metrics...</span>
         </CardContent>
       </Card>
     );
@@ -261,7 +261,7 @@ export function PerformanceMetricsSection({ comparison }: { comparison: ABCompar
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-semibold">Engagement Trends</CardTitle>
-            <p className="text-xs text-zinc-500">Daily A vs B comparison</p>
+            <p className="text-xs text-gray-500">Daily A vs B comparison</p>
           </CardHeader>
           <CardContent>
             <Tabs defaultValue="pagesPerSession">
@@ -306,23 +306,23 @@ export function PerformanceMetricsSection({ comparison }: { comparison: ABCompar
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-semibold">Checkout & Order Metrics</CardTitle>
-            <p className="text-xs text-zinc-500">Aggregate A vs B comparison</p>
+            <p className="text-xs text-gray-500">Aggregate A vs B comparison</p>
           </CardHeader>
           <CardContent>
             <div className="overflow-x-auto">
               <table className="w-full text-left">
                 <thead>
-                  <tr className="border-b border-zinc-200">
-                    <th className="pb-2 pr-4 text-[10px] font-medium uppercase tracking-wider text-zinc-400 sm:text-xs">
+                  <tr className="border-b border-gray-200">
+                    <th className="pb-2 pr-4 text-[10px] font-medium uppercase tracking-wider text-gray-400 sm:text-xs">
                       Metric
                     </th>
-                    <th className="pb-2 px-4 text-right text-[10px] font-medium uppercase tracking-wider text-zinc-400 sm:text-xs">
+                    <th className="pb-2 px-4 text-right text-[10px] font-medium uppercase tracking-wider text-gray-400 sm:text-xs">
                       <span className="inline-flex items-center gap-1.5">
                         <span className="h-1.5 w-1.5 rounded-full bg-blue-500 inline-block" />
                         Shopify
                       </span>
                     </th>
-                    <th className="pb-2 pl-4 text-right text-[10px] font-medium uppercase tracking-wider text-zinc-400 sm:text-xs">
+                    <th className="pb-2 pl-4 text-right text-[10px] font-medium uppercase tracking-wider text-gray-400 sm:text-xs">
                       <span className="inline-flex items-center gap-1.5">
                         <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 inline-block" />
                         Ratio
@@ -408,7 +408,7 @@ export function PerformanceMetricsSection({ comparison }: { comparison: ABCompar
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-semibold">Breakdowns</CardTitle>
-            <p className="text-xs text-zinc-500">Category-wise A vs B split</p>
+            <p className="text-xs text-gray-500">Category-wise A vs B split</p>
           </CardHeader>
           <CardContent className="space-y-6">
             {sm?.shopify?.deviceSplit && sm?.ratio?.deviceSplit && (

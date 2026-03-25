@@ -25,7 +25,7 @@ export function MetricCard({
     <Card>
       <CardContent className="p-3 sm:p-4">
         <div className="mb-2 flex items-center justify-between gap-1 sm:mb-3">
-          <span className="text-[10px] font-medium uppercase tracking-wider text-zinc-500 sm:text-xs">
+          <span className="text-[10px] font-medium uppercase tracking-wider text-gray-500 sm:text-xs">
             {title}
           </span>
           <DeltaBadge value={delta} />
@@ -34,7 +34,7 @@ export function MetricCard({
           <div className="space-y-0.5 sm:space-y-1">
             <div className="flex items-center gap-1">
               <div className="h-1.5 w-1.5 rounded-full bg-blue-500 sm:h-2 sm:w-2" />
-              <span className="text-[9px] font-medium uppercase text-zinc-400 sm:text-[10px]">
+              <span className="text-[9px] font-medium uppercase text-gray-400 sm:text-[10px]">
                 Shopify
               </span>
             </div>
@@ -46,7 +46,7 @@ export function MetricCard({
           <div className="space-y-0.5 sm:space-y-1">
             <div className="flex items-center gap-1">
               <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 sm:h-2 sm:w-2" />
-              <span className="text-[9px] font-medium uppercase text-zinc-400 sm:text-[10px]">
+              <span className="text-[9px] font-medium uppercase text-gray-400 sm:text-[10px]">
                 Ratio
               </span>
             </div>

@@ -11,7 +11,7 @@ interface WinnerBadgeProps {
 export function WinnerBadge({ winner, variant }: WinnerBadgeProps) {
   if (winner === "tie") {
     return (
-      <span className="inline-flex items-center gap-1 rounded-full bg-zinc-100 px-2 py-0.5 text-xs font-medium text-zinc-600">
+      <span className="inline-flex items-center gap-1 rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600">
         <Minus className="h-3 w-3" />
         Tie
       </span>
@@ -53,7 +53,7 @@ export function DeltaBadge({ value, suffix = "%" }: DeltaBadgeProps) {
       className={cn(
         "inline-flex items-center gap-0.5 text-xs font-medium",
         isZero
-          ? "text-zinc-400"
+          ? "text-gray-400"
           : isPositive
           ? "text-emerald-600"
           : "text-red-500"

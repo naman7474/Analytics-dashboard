@@ -65,7 +65,7 @@ export function DateRangePicker() {
             "inline-flex h-8 shrink-0 cursor-pointer items-center justify-center gap-1.5 whitespace-nowrap rounded-md border border-input bg-background px-2 text-xs font-medium shadow-xs transition-colors sm:px-3",
             "hover:bg-accent hover:text-accent-foreground",
             isCustomRangeSelected &&
-              "border-transparent bg-zinc-900 text-white shadow-sm hover:bg-zinc-800 hover:text-white dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
+              "border-transparent bg-primary-600 text-white shadow-sm hover:bg-primary-700 hover:text-white dark:bg-primary-400 dark:text-white dark:hover:bg-primary-300"
           )}
         >
           <CalendarIcon className="h-3.5 w-3.5" />

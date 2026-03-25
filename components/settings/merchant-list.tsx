@@ -17,9 +17,9 @@ export function MerchantList({ merchants, onEdit, onDelete }: MerchantListProps)
     return (
       <Card>
         <CardContent className="flex flex-col items-center justify-center py-12">
-          <Store className="h-8 w-8 text-zinc-300 mb-3" />
-          <p className="text-sm text-zinc-500">No merchants configured yet.</p>
-          <p className="text-xs text-zinc-400 mt-1">
+          <Store className="h-8 w-8 text-gray-300 mb-3" />
+          <p className="text-sm text-gray-500">No merchants configured yet.</p>
+          <p className="text-xs text-gray-400 mt-1">
             Click &quot;Add Merchant&quot; to get started.
           </p>
         </CardContent>
@@ -33,12 +33,12 @@ export function MerchantList({ merchants, onEdit, onDelete }: MerchantListProps)
         <Card key={m.id}>
           <CardContent className="flex items-center justify-between p-4">
             <div className="flex items-center gap-3">
-              <div className="flex h-9 w-9 items-center justify-center rounded-md bg-zinc-100">
-                <Store className="h-4 w-4 text-zinc-500" />
+              <div className="flex h-9 w-9 items-center justify-center rounded-md bg-gray-100">
+                <Store className="h-4 w-4 text-gray-500" />
               </div>
               <div>
                 <p className="text-sm font-medium">{m.name}</p>
-                <p className="text-xs text-zinc-400">{m.domain}</p>
+                <p className="text-xs text-gray-400">{m.domain}</p>
               </div>
               <div className="flex gap-1.5 ml-3">
                 <Badge

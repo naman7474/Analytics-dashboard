@@ -29,7 +29,7 @@ export function LocationTab() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="h-5 w-5 animate-spin text-zinc-400" />
+        <Loader2 className="h-5 w-5 animate-spin text-gray-400" />
       </div>
     );
   }
@@ -60,10 +60,10 @@ export function LocationTab() {
           ) => (
             <TableRow key={i}>
               <TableCell className="text-sm">{row.city}</TableCell>
-              <TableCell className="text-sm text-zinc-500">
+              <TableCell className="text-sm text-gray-500">
                 {row.region}
               </TableCell>
-              <TableCell className="text-sm text-zinc-500">
+              <TableCell className="text-sm text-gray-500">
                 {row.country}
               </TableCell>
               <TableCell className="text-right tabular-nums">
@@ -74,7 +74,7 @@ export function LocationTab() {
         )}
         {rows.length === 0 && (
           <TableRow>
-            <TableCell colSpan={4} className="text-center text-zinc-400 py-8">
+            <TableCell colSpan={4} className="text-center text-gray-400 py-8">
               No data available
             </TableCell>
           </TableRow>

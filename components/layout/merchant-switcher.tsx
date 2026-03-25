@@ -15,7 +15,7 @@ export function MerchantSwitcher() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center gap-2 text-sm text-zinc-400">
+      <div className="flex items-center gap-2 text-sm text-gray-400">
         <Store className="h-4 w-4" />
         Loading...
       </div>
@@ -24,7 +24,7 @@ export function MerchantSwitcher() {
 
   if (merchants.length === 0) {
     return (
-      <div className="flex items-center gap-2 text-sm text-zinc-400">
+      <div className="flex items-center gap-2 text-sm text-gray-400">
         <Store className="h-4 w-4" />
         No merchants configured
       </div>
@@ -38,7 +38,7 @@ export function MerchantSwitcher() {
     >
       <SelectTrigger className="w-[160px] sm:w-[220px] h-9">
         <div className="flex items-center gap-2">
-          <Store className="h-4 w-4 text-zinc-500" />
+          <Store className="h-4 w-4 text-gray-500" />
           <span className="truncate">
             {selectedMerchant ? selectedMerchant.name : "Select merchant"}
           </span>

@@ -80,7 +80,7 @@ export function MerchantForm({ merchant, onSave, onCancel }: MerchantFormProps) 
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="space-y-3">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500">
               General
             </h3>
             <div className="grid grid-cols-2 gap-3">
@@ -136,7 +136,7 @@ export function MerchantForm({ merchant, onSave, onCancel }: MerchantFormProps) 
           </div>
 
           <div className="space-y-3">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500">
               Viewer Access
             </h3>
             <div>
@@ -149,14 +149,14 @@ export function MerchantForm({ merchant, onSave, onCancel }: MerchantFormProps) 
                 onChange={(e) => update("viewerEmails", e.target.value)}
                 placeholder="user1@example.com, user2@example.com"
               />
-              <p className="mt-1 text-xs text-zinc-400">
+              <p className="mt-1 text-xs text-gray-400">
                 Only non-Primathon users in this list will see this merchant.
               </p>
             </div>
           </div>
 
           <div className="space-y-3">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500">
               Shopify
             </h3>
             <div className="grid grid-cols-2 gap-3">
@@ -191,7 +191,7 @@ export function MerchantForm({ merchant, onSave, onCancel }: MerchantFormProps) 
           </div>
 
           <div className="space-y-3">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500">
               PostHog
             </h3>
             <div className="grid grid-cols-2 gap-3">
@@ -226,7 +226,7 @@ export function MerchantForm({ merchant, onSave, onCancel }: MerchantFormProps) 
           </div>
 
           <div className="space-y-3">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500">
               GoKwik
             </h3>
             <div className="grid grid-cols-2 gap-3">

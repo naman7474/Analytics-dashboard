@@ -14,7 +14,7 @@ export default function DeepDivePage() {
   if (!selectedMerchant) {
     return (
       <div className="flex h-[60vh] items-center justify-center">
-        <p className="text-sm text-zinc-400">
+        <p className="text-sm text-gray-400">
           Select a merchant to view deep dive analytics.
         </p>
       </div>
@@ -24,10 +24,10 @@ export default function DeepDivePage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
+        <h1 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
           Deep Dive
         </h1>
-        <p className="text-sm text-zinc-500">
+        <p className="text-sm text-gray-500">
           Detailed breakdowns for {selectedMerchant.name} (Ratio)
         </p>
       </div>

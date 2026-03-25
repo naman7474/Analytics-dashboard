@@ -34,7 +34,7 @@ export function AudienceTab() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="h-5 w-5 animate-spin text-zinc-400" />
+        <Loader2 className="h-5 w-5 animate-spin text-gray-400" />
       </div>
     );
   }
@@ -67,12 +67,12 @@ export function AudienceTab() {
       <div className="mb-4 flex flex-wrap items-center gap-4 text-sm sm:gap-6">
         <div className="flex items-center gap-1.5">
           <span className="inline-block h-2.5 w-2.5 rounded-full bg-emerald-500" />
-          <span className="text-zinc-400">Ratio</span>
+          <span className="text-gray-400">Ratio</span>
           <span className="font-medium">{totalRatio.toLocaleString()} sessions</span>
         </div>
         <div className="flex items-center gap-1.5">
           <span className="inline-block h-2.5 w-2.5 rounded-full bg-blue-500" />
-          <span className="text-zinc-400">Shopify</span>
+          <span className="text-gray-400">Shopify</span>
           <span className="font-medium">{totalShopify.toLocaleString()} sessions</span>
         </div>
       </div>
@@ -121,7 +121,7 @@ export function AudienceTab() {
                   {shopifyPctNum.toFixed(1)}%
                 </TableCell>
                 <TableCell className="text-right tabular-nums text-xs">
-                  <span className={delta > 0 ? "text-emerald-600" : delta < 0 ? "text-red-500" : "text-zinc-400"}>
+                  <span className={delta > 0 ? "text-emerald-600" : delta < 0 ? "text-red-500" : "text-gray-400"}>
                     {delta > 0 ? "+" : ""}{delta.toFixed(1)}pp
                   </span>
                 </TableCell>
@@ -130,7 +130,7 @@ export function AudienceTab() {
           })}
           {sortedTypes.length === 0 && (
             <TableRow>
-              <TableCell colSpan={6} className="text-center text-zinc-400 py-8">
+              <TableCell colSpan={6} className="text-center text-gray-400 py-8">
                 No data available
               </TableCell>
             </TableRow>

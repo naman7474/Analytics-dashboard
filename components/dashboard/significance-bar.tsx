@@ -103,7 +103,7 @@ function getConfidenceLabel(confidence: number): string {
 function InfoTooltip() {
   return (
     <Tooltip>
-      <TooltipTrigger className="shrink-0 rounded-full p-0.5 text-zinc-400 hover:text-zinc-600 focus:outline-none dark:hover:text-zinc-300">
+      <TooltipTrigger className="shrink-0 rounded-full p-0.5 text-gray-400 hover:text-gray-600 focus:outline-none dark:hover:text-gray-300">
         <Info className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
       </TooltipTrigger>
       <TooltipContent side="bottom" className="max-w-sm p-3 text-xs leading-relaxed">
@@ -148,16 +148,16 @@ export function SignificanceBar({ data }: { data: ABComparison }) {
   // Not enough data
   if (result.winner === "tie" || result.confidence < 50) {
     return (
-      <div className="flex items-center gap-2 rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2.5 sm:px-4 sm:py-3 dark:border-zinc-700 dark:bg-zinc-800/50">
-        <Minus className="h-4 w-4 shrink-0 text-zinc-400" />
-        <p className="text-xs text-zinc-500 sm:text-sm">
-          <span className="font-medium text-zinc-700 dark:text-zinc-300">No clear winner yet</span>
+      <div className="flex items-center gap-2 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5 sm:px-4 sm:py-3 dark:border-gray-700 dark:bg-gray-800/50">
+        <Minus className="h-4 w-4 shrink-0 text-gray-400" />
+        <p className="text-xs text-gray-500 sm:text-sm">
+          <span className="font-medium text-gray-700 dark:text-gray-300">No clear winner yet</span>
           {" — "}
           {data.shopify.sessions < MIN_SESSIONS || data.ratio.sessions < MIN_SESSIONS
             ? `both variants need at least ${MIN_SESSIONS.toLocaleString()} sessions.`
             : "not enough data to determine statistical significance on RPS."}
           {result.confidence > 0 && (
-            <span className="ml-1 text-zinc-400">
+            <span className="ml-1 text-gray-400">
               ({result.confidence.toFixed(1)}% confidence)
             </span>
           )}
@@ -200,12 +200,12 @@ export function SignificanceBar({ data }: { data: ABComparison }) {
           {" over "}
           {loserLabel}
         </p>
-        <p className="mt-0.5 text-[10px] text-zinc-500 sm:text-xs">
+        <p className="mt-0.5 text-[10px] text-gray-500 sm:text-xs">
           {confidenceLabel} confidence ({result.confidence.toFixed(1)}%)
           {isSignificant
             ? " — statistically significant"
             : " — needs more data for significance"}
-          <span className="ml-2 text-zinc-400">
+          <span className="ml-2 text-gray-400">
             z = {Math.abs(result.zScore).toFixed(2)}
           </span>
           {result.sessionImbalance && (

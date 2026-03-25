@@ -78,7 +78,7 @@ export function UTMTab() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="h-5 w-5 animate-spin text-zinc-400" />
+        <Loader2 className="h-5 w-5 animate-spin text-gray-400" />
       </div>
     );
   }
@@ -174,15 +174,15 @@ export function UTMTab() {
       <div className="mb-4 flex flex-wrap items-center gap-3 text-sm sm:gap-6">
         <div className="flex items-center gap-1.5">
           <span className="inline-block h-2.5 w-2.5 rounded-full bg-emerald-500" />
-          <span className="text-zinc-400">Ratio</span>
+          <span className="text-gray-400">Ratio</span>
           <span className="font-medium">{totalRatioSessions.toLocaleString()} sessions</span>
         </div>
         <div className="flex items-center gap-1.5">
           <span className="inline-block h-2.5 w-2.5 rounded-full bg-blue-500" />
-          <span className="text-zinc-400">Shopify</span>
+          <span className="text-gray-400">Shopify</span>
           <span className="font-medium">{totalShopifySessions.toLocaleString()} sessions</span>
         </div>
-        <div className="text-zinc-400">
+        <div className="text-gray-400">
           GoKwik: {totalGokwikOrders.toLocaleString()} orders
         </div>
       </div>
@@ -228,7 +228,7 @@ export function UTMTab() {
                 </TableCell>
                 <TableCell className="text-right tabular-nums text-xs">
                   {row.ratioCR > 0 || row.shopifyCR > 0 ? (
-                    <span className={row.crDelta > 0 ? "text-emerald-600" : row.crDelta < 0 ? "text-red-500" : "text-zinc-400"}>
+                    <span className={row.crDelta > 0 ? "text-emerald-600" : row.crDelta < 0 ? "text-red-500" : "text-gray-400"}>
                       {row.crDelta > 0 ? "+" : ""}{row.crDelta.toFixed(2)}pp
                     </span>
                   ) : "—"}
@@ -241,7 +241,7 @@ export function UTMTab() {
                 </TableCell>
                 <TableCell className="text-right tabular-nums text-xs">
                   {row.ratioRPS > 0 || row.shopifyRPS > 0 ? (
-                    <span className={row.rpsDelta > 0 ? "text-emerald-600" : row.rpsDelta < 0 ? "text-red-500" : "text-zinc-400"}>
+                    <span className={row.rpsDelta > 0 ? "text-emerald-600" : row.rpsDelta < 0 ? "text-red-500" : "text-gray-400"}>
                       {row.rpsDelta > 0 ? "+" : ""}{row.rpsDelta.toFixed(1)}%
                     </span>
                   ) : "—"}
@@ -250,7 +250,7 @@ export function UTMTab() {
             ))}
             {merged.length === 0 && (
               <TableRow>
-                <TableCell colSpan={11} className="text-center text-zinc-400 py-8">
+                <TableCell colSpan={11} className="text-center text-gray-400 py-8">
                   No data available
                 </TableCell>
               </TableRow>

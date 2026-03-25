@@ -112,7 +112,7 @@ function formatDeltaValue(key: VitalKey, value: number) {
 }
 
 function getVitalColor(value: number, good: number, poor: number) {
-  if (!hasMetricValue(value)) return "text-zinc-400";
+  if (!hasMetricValue(value)) return "text-gray-400";
   if (value <= good) return "text-emerald-600";
   if (value <= poor) return "text-amber-500";
   return "text-red-500";
@@ -212,8 +212,8 @@ function SourceSummaryCard({
           {title}
         </p>
       </div>
-      <p className="mt-2 text-sm text-zinc-700">{subtitle}</p>
-      <p className="mt-1 text-xs text-zinc-500">{detail}</p>
+      <p className="mt-2 text-sm text-gray-700">{subtitle}</p>
+      <p className="mt-1 text-xs text-gray-500">{detail}</p>
     </div>
   );
 }
@@ -236,8 +236,8 @@ function VitalComparisonCard({
       <CardContent className="space-y-4 p-4">
         <div className="flex items-start justify-between gap-3">
           <div>
-            <p className="text-sm font-medium text-zinc-900">{config.label}</p>
-            <p className="mt-1 text-xs text-zinc-500">Lower is better</p>
+            <p className="text-sm font-medium text-gray-900">{config.label}</p>
+            <p className="mt-1 text-xs text-gray-500">Lower is better</p>
           </div>
           <Badge
             variant="outline"
@@ -245,7 +245,7 @@ function VitalComparisonCard({
               "border-none",
               comparison.tone === "shopify" && "bg-blue-100 text-blue-700",
               comparison.tone === "ratio" && "bg-emerald-100 text-emerald-700",
-              comparison.tone === "muted" && "bg-zinc-100 text-zinc-600"
+              comparison.tone === "muted" && "bg-gray-100 text-gray-600"
             )}
           >
             {comparison.label}
@@ -342,7 +342,7 @@ function DeviceComparison({
         />
       </div>
 
-      <p className="text-xs text-zinc-500">
+      <p className="text-xs text-gray-500">
         Shopify values come from live-site field data. Ratio values come from
         PostHog web vitals for the selected dashboard range, so the time windows
         are intentionally different.
@@ -376,7 +376,7 @@ export function PerformanceTab() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="h-5 w-5 animate-spin text-zinc-400" />
+        <Loader2 className="h-5 w-5 animate-spin text-gray-400" />
       </div>
     );
   }
@@ -399,8 +399,8 @@ export function PerformanceTab() {
     <Tabs defaultValue="mobile">
       <div className="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <div>
-          <p className="text-sm font-medium text-zinc-900">Performance Comparison</p>
-          <p className="text-xs text-zinc-500">
+          <p className="text-sm font-medium text-gray-900">Performance Comparison</p>
+          <p className="text-xs text-gray-500">
             Shopify live website vs Ratio experience for mobile and desktop
           </p>
         </div>

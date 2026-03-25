@@ -36,16 +36,16 @@ function TrendChart({
     <div className="h-[220px] sm:h-[300px]">
       <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
         <LineChart data={formattedData} margin={{ top: 5, right: 5, left: 0, bottom: 5 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#e4e4e7" />
+          <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
           <XAxis
             dataKey="date"
-            tick={{ fontSize: 10, fill: "#a1a1aa" }}
+            tick={{ fontSize: 10, fill: "#9ca3af" }}
             tickLine={false}
-            axisLine={{ stroke: "#e4e4e7" }}
+            axisLine={{ stroke: "#e5e7eb" }}
             interval="preserveStartEnd"
           />
           <YAxis
-            tick={{ fontSize: 10, fill: "#a1a1aa" }}
+            tick={{ fontSize: 10, fill: "#9ca3af" }}
             tickLine={false}
             axisLine={false}
             tickFormatter={formatValue}
@@ -54,7 +54,7 @@ function TrendChart({
           <Tooltip
             contentStyle={{
               borderRadius: "8px",
-              border: "1px solid #e4e4e7",
+              border: "1px solid #e5e7eb",
               fontSize: "12px",
             }}
             formatter={(value, name) => [

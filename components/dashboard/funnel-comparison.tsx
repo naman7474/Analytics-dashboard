@@ -113,7 +113,7 @@ export function FunnelComparison({ data }: FunnelComparisonProps) {
                   <TableCell className="text-right tabular-nums text-sm">
                     {row.format(row.shopify)}
                   </TableCell>
-                  <TableCell className="text-right tabular-nums text-xs text-zinc-400">
+                  <TableCell className="text-right tabular-nums text-xs text-gray-400">
                     {row.shopifyRate !== null
                       ? formatPercent(row.shopifyRate)
                       : "—"}
@@ -121,7 +121,7 @@ export function FunnelComparison({ data }: FunnelComparisonProps) {
                   <TableCell className="text-right tabular-nums text-sm">
                     {row.format(row.ratio)}
                   </TableCell>
-                  <TableCell className="text-right tabular-nums text-xs text-zinc-400">
+                  <TableCell className="text-right tabular-nums text-xs text-gray-400">
                     {row.ratioRate !== null
                       ? formatPercent(row.ratioRate)
                       : "—"}

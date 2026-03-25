@@ -48,10 +48,10 @@ export default function SettingsPage() {
     <div className="space-y-4 sm:space-y-6 max-w-3xl">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-base font-semibold text-zinc-900 sm:text-lg dark:text-zinc-100">
+          <h1 className="text-base font-semibold text-gray-900 sm:text-lg dark:text-gray-100">
             Settings
           </h1>
-          <p className="text-xs text-zinc-500 sm:text-sm">
+          <p className="text-xs text-gray-500 sm:text-sm">
             Manage merchant configurations and API credentials.
           </p>
         </div>

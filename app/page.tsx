@@ -20,8 +20,8 @@ function SectionLoader({ label }: { label: string }) {
   return (
     <Card>
       <CardContent className="flex items-center justify-center py-10">
-        <Loader2 className="h-5 w-5 animate-spin text-zinc-400" />
-        <span className="ml-2 text-sm text-zinc-400">{label}</span>
+        <Loader2 className="h-5 w-5 animate-spin text-gray-400" />
+        <span className="ml-2 text-sm text-gray-400">{label}</span>
       </CardContent>
     </Card>
   );
@@ -31,15 +31,15 @@ function MetricCardSkeleton() {
   return (
     <Card>
       <CardContent className="p-3 sm:p-4">
-        <div className="mb-2 h-3 w-20 animate-pulse rounded bg-zinc-200 sm:mb-3" />
+        <div className="mb-2 h-3 w-20 animate-pulse rounded bg-gray-200 sm:mb-3" />
         <div className="grid grid-cols-2 gap-2 sm:gap-3">
           <div className="space-y-2">
-            <div className="h-2 w-12 animate-pulse rounded bg-zinc-100" />
-            <div className="h-5 w-16 animate-pulse rounded bg-zinc-200 sm:h-7" />
+            <div className="h-2 w-12 animate-pulse rounded bg-gray-100" />
+            <div className="h-5 w-16 animate-pulse rounded bg-gray-200 sm:h-7" />
           </div>
           <div className="space-y-2">
-            <div className="h-2 w-12 animate-pulse rounded bg-zinc-100" />
-            <div className="h-5 w-16 animate-pulse rounded bg-zinc-200 sm:h-7" />
+            <div className="h-2 w-12 animate-pulse rounded bg-gray-100" />
+            <div className="h-5 w-16 animate-pulse rounded bg-gray-200 sm:h-7" />
           </div>
         </div>
       </CardContent>
@@ -55,10 +55,10 @@ export default function DashboardPage() {
     return (
       <div className="flex h-[60vh] items-center justify-center">
         <div className="text-center">
-          <h2 className="text-lg font-semibold text-zinc-700">
+          <h2 className="text-lg font-semibold text-gray-700">
             No Merchant Selected
           </h2>
-          <p className="mt-1 text-sm text-zinc-400">
+          <p className="mt-1 text-sm text-gray-400">
             Add a merchant in Settings, then select it from the dropdown above.
           </p>
         </div>
@@ -69,7 +69,7 @@ export default function DashboardPage() {
   if (!enabled) {
     return (
       <div className="flex h-[60vh] items-center justify-center">
-        <p className="text-sm text-zinc-400">Select a date range to begin.</p>
+        <p className="text-sm text-gray-400">Select a date range to begin.</p>
       </div>
     );
   }
@@ -79,26 +79,28 @@ export default function DashboardPage() {
   const trendsReady = !!dailyTrends;
 
   return (
-    <div className="space-y-4 sm:space-y-6">
+    <div className="animate-fadeIn space-y-4 sm:space-y-6">
       <div>
-        <h1 className="text-base font-semibold text-zinc-900 sm:text-lg dark:text-zinc-100">
+        <h1 className="text-base font-semibold text-gray-900 sm:text-lg dark:text-gray-100">
           Experiment Overview
         </h1>
-        <p className="text-xs text-zinc-500 sm:text-sm">
+        <p className="text-xs text-gray-500 sm:text-sm">
           Shopify (A) vs Ratio (B) &mdash; {selectedMerchant.name}
         </p>
       </div>
 
       {/* Statistical significance announcement */}
       {comparisonReady ? (
-        <SignificanceBar data={comparison} />
+        <div className="animate-slideUp">
+          <SignificanceBar data={comparison} />
+        </div>
       ) : isLoading ? (
-        <div className="h-12 animate-pulse rounded-lg bg-zinc-100" />
+        <div className="h-12 animate-pulse rounded-lg bg-gray-100" />
       ) : null}
 
       {/* Summary metric cards */}
       {comparisonReady ? (
-        <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4 animate-slideUp-delay-1">
           <MetricCard
             title="Conversion Rate"
             shopifyValue={comparison.shopify.conversionRate}
@@ -145,20 +147,24 @@ export default function DashboardPage() {
 
       {/* Funnel comparison table */}
       {comparisonReady ? (
-        <FunnelComparison data={comparison} />
+        <div className="animate-slideUp-delay-2">
+          <FunnelComparison data={comparison} />
+        </div>
       ) : isLoading ? (
         <SectionLoader label="Loading funnel data..." />
       ) : null}
 
       {/* Daily trend charts */}
       {trendsReady ? (
-        <DailyTrendChart data={dailyTrends} />
+        <div className="animate-slideUp-delay-3">
+          <DailyTrendChart data={dailyTrends} />
+        </div>
       ) : isLoading ? (
         <SectionLoader label="Loading daily trends..." />
       ) : null}
 
       {/* Deep dive tabs — each tab fetches its own data independently */}
-      <Card>
+      <Card className="animate-slideUp-delay-4">
         <CardContent className="p-4 sm:p-6">
           <Tabs defaultValue="audience">
             <div className="mb-4 overflow-x-auto scrollbar-hide">
@@ -191,7 +197,7 @@ export default function DashboardPage() {
       {/* No data fallback — only show when loading is done and nothing came back */}
       {!isLoading && !comparisonReady && (
         <div className="flex items-center justify-center py-12">
-          <p className="text-sm text-zinc-400">
+          <p className="text-sm text-gray-400">
             No data available for the selected range.
           </p>
         </div>
