@@ -42,12 +42,10 @@ export function AudienceTab() {
   const ratioRows: AudienceRow[] = data?.data?.ratio || [];
   const shopifyRows: AudienceRow[] = data?.data?.shopify || [];
 
-  const allowedTypes = new Set(["Product", "Collection", "Homepage", "Custom Page"]);
-
-  // Build a unified list of allowed landing page types
+  // Build a unified list of all landing page types
   const allTypes = new Set<string>();
-  ratioRows.filter((r) => allowedTypes.has(r.landingPageType)).forEach((r) => allTypes.add(r.landingPageType));
-  shopifyRows.filter((r) => allowedTypes.has(r.landingPageType)).forEach((r) => allTypes.add(r.landingPageType));
+  ratioRows.forEach((r) => allTypes.add(r.landingPageType));
+  shopifyRows.forEach((r) => allTypes.add(r.landingPageType));
 
   const ratioMap = new Map(ratioRows.map((r) => [r.landingPageType, r.sessions]));
   const shopifyMap = new Map(shopifyRows.map((r) => [r.landingPageType, r.sessions]));
