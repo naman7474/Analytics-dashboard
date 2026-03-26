@@ -52,22 +52,14 @@ async function executeShopifyQL(merchant: MerchantConfig, query: string) {
 function toShopifyQLDates(from: string, to: string): { since: string; until: string } {
   const today = getISTToday();
   const daysAgoFrom = differenceInISODays(today, from);
-  const daysAgoTo = differenceInISODays(today, to);
 
   // ShopifyQL SINCE accepts startOfDay(-Nd) or today
   const since = daysAgoFrom === 0 ? "today" : `startOfDay(-${daysAgoFrom}d)`;
 
-  // ShopifyQL UNTIL is exclusive — to include the "to" date, we need the day after.
-  // Use "today" when the to date is today or yesterday (startOfDay(-0d) is invalid).
-  // Callers must filter response rows by from/to to exclude extra data.
-  let until: string;
-  if (daysAgoTo <= 0) {
-    until = "today";
-  } else if (daysAgoTo === 1) {
-    until = "today";
-  } else {
-    until = `startOfDay(-${daysAgoTo - 1}d)`;
-  }
+  // ShopifyQL UNTIL only reliably accepts "today" — relative date expressions
+  // like startOfDay(-Nd) cause parse errors in the UNTIL clause.
+  // Always use "today" and rely on callers to filter response rows by from/to.
+  const until = "today";
 
   return { since, until };
 }
