@@ -31,15 +31,15 @@ function MetricCardSkeleton() {
   return (
     <Card>
       <CardContent className="p-3 sm:p-4">
-        <div className="mb-2 h-3 w-20 animate-pulse rounded bg-gray-200 sm:mb-3" />
+        <div className="mb-2 h-3 w-20 animate-pulse rounded bg-gray-200 dark:bg-gray-700 sm:mb-3" />
         <div className="grid grid-cols-2 gap-2 sm:gap-3">
           <div className="space-y-2">
-            <div className="h-2 w-12 animate-pulse rounded bg-gray-100" />
-            <div className="h-5 w-16 animate-pulse rounded bg-gray-200 sm:h-7" />
+            <div className="h-2 w-12 animate-pulse rounded bg-gray-100 dark:bg-gray-800" />
+            <div className="h-5 w-16 animate-pulse rounded bg-gray-200 dark:bg-gray-700 sm:h-7" />
           </div>
           <div className="space-y-2">
-            <div className="h-2 w-12 animate-pulse rounded bg-gray-100" />
-            <div className="h-5 w-16 animate-pulse rounded bg-gray-200 sm:h-7" />
+            <div className="h-2 w-12 animate-pulse rounded bg-gray-100 dark:bg-gray-800" />
+            <div className="h-5 w-16 animate-pulse rounded bg-gray-200 dark:bg-gray-700 sm:h-7" />
           </div>
         </div>
       </CardContent>
@@ -90,16 +90,23 @@ export default function DashboardPage() {
       </div>
 
       {/* Statistical significance announcement */}
-      {comparisonReady ? (
+      {isLoading ? (
+        <div className="h-12 animate-pulse rounded-lg bg-gray-200 dark:bg-gray-800" />
+      ) : comparisonReady ? (
         <div className="animate-slideUp">
           <SignificanceBar data={comparison} />
         </div>
-      ) : isLoading ? (
-        <div className="h-12 animate-pulse rounded-lg bg-gray-100" />
       ) : null}
 
       {/* Summary metric cards */}
-      {comparisonReady ? (
+      {isLoading ? (
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+          <MetricCardSkeleton />
+          <MetricCardSkeleton />
+          <MetricCardSkeleton />
+          <MetricCardSkeleton />
+        </div>
+      ) : comparisonReady ? (
         <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4 animate-slideUp-delay-1">
           <MetricCard
             title="Conversion Rate"
@@ -136,31 +143,24 @@ export default function DashboardPage() {
             }
           />
         </div>
-      ) : isLoading ? (
-        <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
-          <MetricCardSkeleton />
-          <MetricCardSkeleton />
-          <MetricCardSkeleton />
-          <MetricCardSkeleton />
-        </div>
       ) : null}
 
       {/* Funnel comparison table */}
-      {comparisonReady ? (
+      {isLoading ? (
+        <SectionLoader label="Loading funnel data..." />
+      ) : comparisonReady ? (
         <div className="animate-slideUp-delay-2">
           <FunnelComparison data={comparison} />
         </div>
-      ) : isLoading ? (
-        <SectionLoader label="Loading funnel data..." />
       ) : null}
 
       {/* Daily trend charts */}
-      {trendsReady ? (
+      {isLoading ? (
+        <SectionLoader label="Loading daily trends..." />
+      ) : trendsReady ? (
         <div className="animate-slideUp-delay-3">
           <DailyTrendChart data={dailyTrends} />
         </div>
-      ) : isLoading ? (
-        <SectionLoader label="Loading daily trends..." />
       ) : null}
 
       {/* Deep dive tabs — each tab fetches its own data independently */}
