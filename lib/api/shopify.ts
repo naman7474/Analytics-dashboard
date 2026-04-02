@@ -153,15 +153,17 @@ export async function fetchShopifyOrders(
     };
   };
 
-  const tagFilter =
+  // Shopify variant (A): Gokwik-tagged, excluding Ratio and Appbrew
+  // Ratio variant (B): tagged with merchant's ratioTag
+  const tagFilters =
     variant === "ratio"
-      ? `tag:'${merchant.ratioTag}'`
-      : `tag_not:'${merchant.ratioTag}'`;
+      ? [`tag:'${merchant.ratioTag}'`]
+      : [`tag_not:'${merchant.ratioTag}'`, `tag_not:'Appbrew'`, `tag:'Gokwik'`];
 
   const query = [
     `created_at:>=${from}`,
     `created_at:<=${to}`,
-    tagFilter,
+    ...tagFilters,
   ].join(" ");
 
   const url = `https://${merchant.shopify.shop}/admin/api/${SHOPIFY_API_VERSION}/graphql.json`;
@@ -535,4 +537,286 @@ export async function fetchShopifyOrdersExtended(
     newCustomerOrders,
     returningCustomerOrders,
   };
+}
+
+/**
+ * Extract the URL path from a full URL string.
+ */
+function extractPath(fullUrl: string): string {
+  try {
+    return new URL(fullUrl).pathname;
+  } catch {
+    // If URL parsing fails, treat the value itself as a path
+    return fullUrl.startsWith("/") ? fullUrl : "/";
+  }
+}
+
+/**
+ * Map a URL path to a Shopify-style landing page type.
+ */
+function urlPathToPageType(path: string): string {
+  if (!path || path === "/") return "home";
+  const lower = path.toLowerCase();
+  if (lower.startsWith("/products")) return "product";
+  if (lower.startsWith("/collections")) return "collection";
+  if (lower.startsWith("/pages")) return "page";
+  if (lower.startsWith("/blogs")) return "blog";
+  if (lower.startsWith("/search")) return "search";
+  return "other";
+}
+
+/**
+ * Aggregated orders by landing page type for a variant.
+ */
+export interface LandingPageOrderRow {
+  landingPageType: string;
+  orders: number;
+  sales: number;
+}
+
+/**
+ * Fetch Ratio orders from Shopify Orders API, extract `full_url` from
+ * customAttributes (noteAttributes) to determine landing page type.
+ * Only fetches orders tagged with the merchant's ratioTag.
+ */
+export async function fetchRatioOrdersByLandingPage(
+  merchant: MerchantConfig,
+  from: string,
+  to: string
+): Promise<LandingPageOrderRow[]> {
+  const url = `https://${merchant.shopify.shop}/admin/api/${SHOPIFY_API_VERSION}/graphql.json`;
+
+  const searchQuery = [
+    `created_at:>=${from}`,
+    `created_at:<=${to}`,
+    `tag:'${merchant.ratioTag}'`,
+  ].join(" ");
+
+  const typeMap = new Map<string, { orders: number; sales: number }>();
+  let cursor: string | null = null;
+  let hasNext = true;
+
+  while (hasNext) {
+    const graphqlQuery = `query Orders($query: String!, $after: String) {
+      orders(first: 250, query: $query, sortKey: CREATED_AT, after: $after) {
+        edges {
+          cursor
+          node {
+            id
+            totalPriceSet { shopMoney { amount } }
+            customAttributes { key value }
+          }
+        }
+        pageInfo { hasNextPage }
+      }
+    }`;
+
+    const res: Response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Shopify-Access-Token": merchant.shopify.accessToken,
+      },
+      body: JSON.stringify({
+        query: graphqlQuery,
+        variables: { query: searchQuery, after: cursor },
+      }),
+    });
+
+    if (!res.ok) {
+      throw new Error(`Shopify API error: ${res.status} ${res.statusText}`);
+    }
+
+    const data = await res.json();
+    if (data?.errors?.length) {
+      throw new Error(
+        data.errors.map((e: { message?: string }) => e.message).join("; ")
+      );
+    }
+
+    const edges = data?.data?.orders?.edges || [];
+
+    for (const edge of edges) {
+      const node = edge.node;
+      cursor = edge.cursor;
+
+      const price = parseFloat(node.totalPriceSet?.shopMoney?.amount || "0");
+
+      // Extract full_url from customAttributes (noteAttributes)
+      const attrs: Array<{ key: string; value: string }> = node.customAttributes || [];
+      const fullUrlAttr = attrs.find(
+        (a) => a.key === "full_url" || a.key === "landing_page" || a.key === "landing_page_url"
+      );
+      const fullUrl = fullUrlAttr?.value || "";
+
+      const path = fullUrl ? extractPath(fullUrl) : "/";
+      const pageType = urlPathToPageType(path);
+
+      if (!typeMap.has(pageType)) typeMap.set(pageType, { orders: 0, sales: 0 });
+      const entry = typeMap.get(pageType)!;
+      entry.orders += 1;
+      entry.sales += price;
+    }
+
+    hasNext = data?.data?.orders?.pageInfo?.hasNextPage || false;
+  }
+
+  return Array.from(typeMap.entries())
+    .map(([landingPageType, data]) => ({
+      landingPageType,
+      orders: data.orders,
+      sales: data.sales,
+    }))
+    .sort((a, b) => b.orders - a.orders);
+}
+
+/**
+ * Fetch Shopify-variant orders (NOT tagged with ratioTag and NOT tagged with Appbrew).
+ * Uses the same URL-based page type mapping as Ratio orders.
+ */
+export async function fetchShopifyOrdersByLandingPage(
+  merchant: MerchantConfig,
+  from: string,
+  to: string
+): Promise<LandingPageOrderRow[]> {
+  const url = `https://${merchant.shopify.shop}/admin/api/${SHOPIFY_API_VERSION}/graphql.json`;
+
+  const searchQuery = [
+    `created_at:>=${from}`,
+    `created_at:<=${to}`,
+    `tag_not:'${merchant.ratioTag}'`,
+    `tag_not:'Appbrew'`,
+    `tag:'Gokwik'`,
+  ].join(" ");
+
+  const typeMap = new Map<string, { orders: number; sales: number }>();
+  let cursor: string | null = null;
+  let hasNext = true;
+
+  while (hasNext) {
+    const graphqlQuery = `query Orders($query: String!, $after: String) {
+      orders(first: 250, query: $query, sortKey: CREATED_AT, after: $after) {
+        edges {
+          cursor
+          node {
+            id
+            totalPriceSet { shopMoney { amount } }
+            customAttributes { key value }
+          }
+        }
+        pageInfo { hasNextPage }
+      }
+    }`;
+
+    const res: Response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Shopify-Access-Token": merchant.shopify.accessToken,
+      },
+      body: JSON.stringify({
+        query: graphqlQuery,
+        variables: { query: searchQuery, after: cursor },
+      }),
+    });
+
+    if (!res.ok) {
+      throw new Error(`Shopify API error: ${res.status} ${res.statusText}`);
+    }
+
+    const data = await res.json();
+    if (data?.errors?.length) {
+      throw new Error(
+        data.errors.map((e: { message?: string }) => e.message).join("; ")
+      );
+    }
+
+    const edges = data?.data?.orders?.edges || [];
+
+    for (const edge of edges) {
+      const node = edge.node;
+      cursor = edge.cursor;
+
+      const price = parseFloat(node.totalPriceSet?.shopMoney?.amount || "0");
+
+      const attrs: Array<{ key: string; value: string }> = node.customAttributes || [];
+      const fullUrlAttr = attrs.find(
+        (a) => a.key === "full_url" || a.key === "landing_page" || a.key === "landing_page_url"
+      );
+      const fullUrl = fullUrlAttr?.value || "";
+
+      const path = fullUrl ? extractPath(fullUrl) : "/";
+      const pageType = urlPathToPageType(path);
+
+      if (!typeMap.has(pageType)) typeMap.set(pageType, { orders: 0, sales: 0 });
+      const entry = typeMap.get(pageType)!;
+      entry.orders += 1;
+      entry.sales += price;
+    }
+
+    hasNext = data?.data?.orders?.pageInfo?.hasNextPage || false;
+  }
+
+  return Array.from(typeMap.entries())
+    .map(([landingPageType, data]) => ({
+      landingPageType,
+      orders: data.orders,
+      sales: data.sales,
+    }))
+    .sort((a, b) => b.orders - a.orders);
+}
+
+/**
+ * Landing page session row returned by the aggregation.
+ */
+export interface LandingPageSessionRow {
+  landingPageType: string;
+  sessions: number;
+  sessionsWithCartAdditions: number;
+  atcRate: number; // 0-100
+}
+
+/**
+ * Fetch sessions + ATC grouped by landing_page_type from ShopifyQL.
+ * Returns sessions and cart additions per landing page type for a given variant.
+ */
+export async function fetchShopifySessionsByLandingPage(
+  merchant: MerchantConfig,
+  from: string,
+  to: string,
+  variant: "shopify" | "ratio"
+): Promise<LandingPageSessionRow[]> {
+  const { since, until } = toShopifyQLDates(from, to);
+  const urlFilter = variant === "ratio"
+    ? `landing_page_url CONTAINS '${merchant.storeDomain}'`
+    : `landing_page_url NOT CONTAINS '${merchant.storeDomain}'`;
+
+  const query = `FROM sessions SHOW sessions, sessions_with_cart_additions GROUP BY landing_page_type WHERE human_or_bot_session IN ('human') AND ${urlFilter} TIMESERIES day SINCE ${since} UNTIL ${until} ORDER BY sessions DESC LIMIT 500`;
+
+  const result = await executeShopifyQL(merchant, query);
+  const rows = result?.data?.shopifyqlQuery?.tableData?.rows || [];
+
+  // Aggregate daily rows into totals per landing page type, filtering by date range
+  const typeMap = new Map<string, { sessions: number; atc: number }>();
+
+  for (const row of rows) {
+    const day = row["day"] || row["Day"];
+    if (!day || day === "Total" || day < from || day > to) continue;
+    const pageType = String(row["landing_page_type"] || row["Landing page type"] || "");
+    if (!pageType) continue;
+
+    if (!typeMap.has(pageType)) typeMap.set(pageType, { sessions: 0, atc: 0 });
+    const entry = typeMap.get(pageType)!;
+    entry.sessions += Number(row["sessions"]) || 0;
+    entry.atc += Number(row["sessions_with_cart_additions"]) || 0;
+  }
+
+  return Array.from(typeMap.entries())
+    .map(([landingPageType, data]) => ({
+      landingPageType,
+      sessions: data.sessions,
+      sessionsWithCartAdditions: data.atc,
+      atcRate: data.sessions > 0 ? (data.atc / data.sessions) * 100 : 0,
+    }))
+    .sort((a, b) => b.sessions - a.sessions);
 }

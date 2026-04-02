@@ -11,6 +11,7 @@ import { AudienceTab } from "@/components/deep-dive/audience-tab";
 import { UTMTab } from "@/components/deep-dive/utm-tab";
 import { LocationTab } from "@/components/deep-dive/location-tab";
 import { PerformanceTab } from "@/components/deep-dive/performance-tab";
+import { LandingPageTab } from "@/components/deep-dive/landing-page-tab";
 import { PerformanceMetricsSection } from "@/components/dashboard/performance-metrics-section";
 import { SignificanceBar } from "@/components/dashboard/significance-bar";
 import { formatPercent, formatCurrency, formatNumber } from "@/lib/utils";
@@ -166,15 +167,19 @@ export default function DashboardPage() {
       {/* Deep dive tabs — each tab fetches its own data independently */}
       <Card className="animate-slideUp-delay-4">
         <CardContent className="p-4 sm:p-6">
-          <Tabs defaultValue="audience">
+          <Tabs defaultValue="landing-page">
             <div className="mb-4 overflow-x-auto scrollbar-hide">
               <TabsList>
+                <TabsTrigger value="landing-page" className="text-xs sm:text-sm">Landing Page</TabsTrigger>
                 <TabsTrigger value="audience" className="text-xs sm:text-sm">Audience</TabsTrigger>
                 <TabsTrigger value="utm" className="text-xs sm:text-sm">UTM Sources</TabsTrigger>
                 <TabsTrigger value="location" className="text-xs sm:text-sm">Location</TabsTrigger>
                 <TabsTrigger value="performance" className="text-xs sm:text-sm">Performance</TabsTrigger>
               </TabsList>
             </div>
+            <TabsContent value="landing-page">
+              <LandingPageTab />
+            </TabsContent>
             <TabsContent value="audience">
               <AudienceTab />
             </TabsContent>

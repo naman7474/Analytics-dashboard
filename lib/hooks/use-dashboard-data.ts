@@ -50,9 +50,9 @@ export function useDashboardData() {
     fetcher
   );
 
-  // GoKwik order metrics (total orders + sales across both variants)
-  const { data: gokwikOrders, isLoading: loadingGokwikOrders } = useSWR(
-    enabled ? `/api/gokwik/order-metrics?${params}` : null,
+  // Shopify orders for Shopify variant (directly from Shopify, not derived from GoKwik)
+  const { data: shopifyOrdersData, isLoading: loadingShopifyOrders } = useSWR(
+    enabled ? `/api/shopify/orders?${params}&variant=shopify` : null,
     fetcher
   );
 
@@ -67,7 +67,7 @@ export function useDashboardData() {
     loadingRatioSessions ||
     loadingFunnel ||
     loadingGokwikCheckout ||
-    loadingGokwikOrders ||
+    loadingShopifyOrders ||
     loadingRatioOrders;
 
   let comparison: ABComparison | null = null;
@@ -77,7 +77,7 @@ export function useDashboardData() {
     shopifySessions?.data &&
     ratioSessions?.data &&
     posthogFunnel?.data &&
-    gokwikOrders?.data
+    shopifyOrdersData?.data
   ) {
     // ── Variant A: Shopify sessions from ShopifyQL ──
     const shopifySessionsData = shopifySessions.data;
@@ -113,11 +113,6 @@ export function useDashboardData() {
       0
     );
 
-    // ── GoKwik totals (both variants combined) ──
-    const gokwikOrderData = gokwikOrders.data;
-    const gokwikTotalOrders: number = gokwikOrderData?.orderStats?.total || 0;
-    const gokwikTotalSales: number = gokwikOrderData?.saleStats?.total || 0;
-
     // GoKwik checkout funnel — conversionFunnel is an array of events
     // Each event has { event, primaryValue (count), conversion (%), ... }
     // CheckoutStarted.primaryValue = total checkout-started count
@@ -132,20 +127,18 @@ export function useDashboardData() {
       }
     }
 
-    // ── Derive Shopify (A) = GoKwik total − Ratio (B) ──
+    // ── Derive Shopify checkout = GoKwik total checkout − Ratio checkout ──
     const shopifyCheckout = Math.max(0, gokwikTotalCheckoutStarted - totalRatioCheckout);
 
-    // Fallback sales split when Shopify order summaries are unavailable.
+    // ── Shopify (A) orders directly from Shopify (Gokwik-tagged, excluding Ratio & Appbrew) ──
+    const shopifyOrderSummary: ShopifyOrdersSummary = shopifyOrdersData.data;
+    const actualShopifyOrders = shopifyOrderSummary.totalOrders;
+    const actualShopifySales = shopifyOrderSummary.totalSales;
 
-    const ratioOrderShare = gokwikTotalOrders > 0 ? totalRatioOrders / gokwikTotalOrders : 0;
-    const ratioSalesEstimate = gokwikTotalSales * ratioOrderShare;
-
+    // ── Ratio (B) orders from Shopify, with PostHog fallback ──
     const ratioOrderSummary: ShopifyOrdersSummary | undefined = ratioOrdersData?.data;
-
     const actualRatioOrders = ratioOrderSummary?.totalOrders ?? totalRatioOrders;
-    const actualRatioSales = ratioOrderSummary?.totalSales ?? ratioSalesEstimate;
-    const actualShopifyOrders = Math.max(0, gokwikTotalOrders - actualRatioOrders);
-    const actualShopifySales = Math.max(0, gokwikTotalSales - actualRatioSales);
+    const actualRatioSales = ratioOrderSummary?.totalSales ?? 0;
 
     const shopifyFunnel: VariantFunnel = {
       sessions: totalShopifySessions,
@@ -187,11 +180,8 @@ export function useDashboardData() {
     };
 
     // ── Daily trends ──
-    // GoKwik order breakdown is hourly; aggregate to daily
-    const gokwikDailyOrders = aggregateHourlyToDaily(gokwikOrderData?.orderStats?.breakdown || []);
-    const gokwikDailySales = aggregateHourlyToDaily(gokwikOrderData?.saleStats?.breakdown || []);
+    const shopifyDailyOrderBreakdown = shopifyOrderSummary.orders || {};
     const ratioDailyOrderBreakdown = ratioOrderSummary?.orders || {};
-    const hasActualRatioDailyOrders = Object.keys(ratioDailyOrderBreakdown).length > 0;
 
     const dateMap = new Map<string, {
       shopifySessions: number; ratioSessions: number;
@@ -221,11 +211,7 @@ export function useDashboardData() {
       dateMap.get(d.date)!.ratioOrders = d.totalOrders;
     }
 
-    for (const date of Object.keys(gokwikDailyOrders)) {
-      if (!dateMap.has(date)) dateMap.set(date, emptyDay());
-    }
-
-    for (const date of Object.keys(gokwikDailySales)) {
+    for (const date of Object.keys(shopifyDailyOrderBreakdown)) {
       if (!dateMap.has(date)) dateMap.set(date, emptyDay());
     }
 
@@ -234,25 +220,16 @@ export function useDashboardData() {
     }
 
     for (const [date, entry] of dateMap.entries()) {
-      if (hasActualRatioDailyOrders) {
-        const gokwikDayOrders = gokwikDailyOrders[date] || 0;
-        const gokwikDaySales = gokwikDailySales[date] || 0;
-        const ratioDay = ratioDailyOrderBreakdown[date] || { orders: 0, sales: 0 };
+      const shopifyDay = shopifyDailyOrderBreakdown[date] || { orders: 0, sales: 0 };
+      entry.shopifyOrders = shopifyDay.orders;
+      entry.shopifySales = shopifyDay.sales;
+
+      const ratioDay = ratioDailyOrderBreakdown[date];
+      if (ratioDay) {
         entry.ratioOrders = ratioDay.orders;
         entry.ratioSales = ratioDay.sales;
-        entry.shopifyOrders = Math.max(0, gokwikDayOrders - ratioDay.orders);
-        entry.shopifySales = Math.max(0, gokwikDaySales - ratioDay.sales);
-      } else {
-        // Fallback when Shopify order summaries are unavailable.
-        const gokwikDayOrders = gokwikDailyOrders[date] || 0;
-        const gokwikDaySales = gokwikDailySales[date] || 0;
-        entry.shopifyOrders = Math.max(0, gokwikDayOrders - entry.ratioOrders);
-
-        const dayOrderTotal = gokwikDayOrders || 1;
-        const ratioShare = entry.ratioOrders / dayOrderTotal;
-        entry.ratioSales = gokwikDaySales * ratioShare;
-        entry.shopifySales = Math.max(0, gokwikDaySales - entry.ratioSales);
       }
+      // Otherwise ratioOrders from PostHog is already populated, ratioSales stays 0
     }
 
     const sortedDates = Array.from(dateMap.keys()).sort();
@@ -295,13 +272,3 @@ export function useDashboardData() {
   return { comparison, dailyTrends, isLoading, enabled };
 }
 
-/** Aggregate GoKwik hourly breakdown [{date, hour, value}] into {date: totalValue} */
-function aggregateHourlyToDaily(
-  breakdown: Array<{ date: string; value: number }>
-): Record<string, number> {
-  const map: Record<string, number> = {};
-  for (const entry of breakdown) {
-    map[entry.date] = (map[entry.date] || 0) + entry.value;
-  }
-  return map;
-}
