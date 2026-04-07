@@ -5,7 +5,11 @@ import { useMerchant } from "./use-merchant";
 import { useDateRange } from "./use-date-range";
 import { SessionMetrics, ExtendedOrderMetrics, ABComparison, DailyDataPoint } from "../types";
 
-const fetcher = (url: string) => fetch(url).then((r) => r.json());
+const fetcher = (url: string) =>
+  fetch(url).then((r) => {
+    if (!r.ok) throw new Error(`API error: ${r.status}`);
+    return r.json();
+  });
 
 export interface SessionTrends {
   pagesPerSession: DailyDataPoint[];
@@ -20,6 +24,8 @@ export interface PerformanceData {
   cartAbandonmentRate: { shopify: number; ratio: number } | null;
   checkoutAbandonmentRate: { shopify: number; ratio: number } | null;
   isLoading: boolean;
+  isLoadingSession: boolean;
+  isLoadingOrders: boolean;
 }
 
 function mergeDailyMetric(
@@ -97,5 +103,7 @@ export function usePerformanceMetrics(comparison: ABComparison | null): Performa
     cartAbandonmentRate,
     checkoutAbandonmentRate,
     isLoading,
+    isLoadingSession: loadingSession,
+    isLoadingOrders: loadingOrders,
   };
 }

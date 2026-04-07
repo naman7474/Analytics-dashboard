@@ -33,18 +33,6 @@ export function MetricCard({
         <div className="grid grid-cols-2 gap-2 sm:gap-3">
           <div className="space-y-0.5 sm:space-y-1">
             <div className="flex items-center gap-1">
-              <div className="h-1.5 w-1.5 rounded-full bg-blue-500 sm:h-2 sm:w-2" />
-              <span className="text-[9px] font-medium uppercase text-gray-400 sm:text-[10px]">
-                Shopify
-              </span>
-            </div>
-            <p className="text-sm font-semibold tabular-nums sm:text-lg">
-              {fmt(shopifyValue)}
-            </p>
-            <WinnerBadge winner={winner} variant="shopify" />
-          </div>
-          <div className="space-y-0.5 sm:space-y-1">
-            <div className="flex items-center gap-1">
               <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 sm:h-2 sm:w-2" />
               <span className="text-[9px] font-medium uppercase text-gray-400 sm:text-[10px]">
                 Ratio
@@ -54,6 +42,18 @@ export function MetricCard({
               {fmt(ratioValue)}
             </p>
             <WinnerBadge winner={winner} variant="ratio" />
+          </div>
+          <div className="space-y-0.5 sm:space-y-1">
+            <div className="flex items-center gap-1">
+              <div className="h-1.5 w-1.5 rounded-full bg-blue-500 sm:h-2 sm:w-2" />
+              <span className="text-[9px] font-medium uppercase text-gray-400 sm:text-[10px]">
+                Shopify
+              </span>
+            </div>
+            <p className="text-sm font-semibold tabular-nums sm:text-lg">
+              {fmt(shopifyValue)}
+            </p>
+            <WinnerBadge winner={winner} variant="shopify" />
           </div>
         </div>
       </CardContent>

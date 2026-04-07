@@ -76,15 +76,15 @@ export function FunnelComparison({ data }: FunnelComparisonProps) {
               <TableHead className="pl-6 w-[120px]">Step</TableHead>
               <TableHead className="text-right">
                 <div className="flex items-center justify-end gap-1.5">
-                  <div className="h-2 w-2 rounded-full bg-blue-500" />
-                  Shopify
+                  <div className="h-2 w-2 rounded-full bg-emerald-500" />
+                  Ratio
                 </div>
               </TableHead>
               <TableHead className="text-right">Rate</TableHead>
               <TableHead className="text-right">
                 <div className="flex items-center justify-end gap-1.5">
-                  <div className="h-2 w-2 rounded-full bg-emerald-500" />
-                  Ratio
+                  <div className="h-2 w-2 rounded-full bg-blue-500" />
+                  Shopify
                 </div>
               </TableHead>
               <TableHead className="text-right">Rate</TableHead>
@@ -111,19 +111,19 @@ export function FunnelComparison({ data }: FunnelComparisonProps) {
                     {row.step}
                   </TableCell>
                   <TableCell className="text-right tabular-nums text-sm">
-                    {row.format(row.shopify)}
-                  </TableCell>
-                  <TableCell className="text-right tabular-nums text-xs text-gray-400">
-                    {row.shopifyRate !== null
-                      ? formatPercent(row.shopifyRate)
-                      : "—"}
-                  </TableCell>
-                  <TableCell className="text-right tabular-nums text-sm">
                     {row.format(row.ratio)}
                   </TableCell>
                   <TableCell className="text-right tabular-nums text-xs text-gray-400">
                     {row.ratioRate !== null
                       ? formatPercent(row.ratioRate)
+                      : "—"}
+                  </TableCell>
+                  <TableCell className="text-right tabular-nums text-sm">
+                    {row.format(row.shopify)}
+                  </TableCell>
+                  <TableCell className="text-right tabular-nums text-xs text-gray-400">
+                    {row.shopifyRate !== null
+                      ? formatPercent(row.shopifyRate)
                       : "—"}
                   </TableCell>
                   <TableCell className="text-right pr-6">

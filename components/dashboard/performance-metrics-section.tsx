@@ -67,22 +67,22 @@ function TrendChart({
           <Legend
             formatter={(value) => (
               <span className="text-xs">
-                {value === "shopify" ? "Shopify (A)" : "Ratio (B)"}
+                {value === "ratio" ? "Ratio" : "Shopify"}
               </span>
             )}
           />
           <Line
             type="monotone"
-            dataKey="shopify"
-            stroke={VARIANT_COLORS.shopify}
+            dataKey="ratio"
+            stroke={VARIANT_COLORS.ratio}
             strokeWidth={2}
             dot={{ r: 2 }}
             activeDot={{ r: 4 }}
           />
           <Line
             type="monotone"
-            dataKey="ratio"
-            stroke={VARIANT_COLORS.ratio}
+            dataKey="shopify"
+            stroke={VARIANT_COLORS.shopify}
             strokeWidth={2}
             dot={{ r: 2 }}
             activeDot={{ r: 4 }}
@@ -116,11 +116,11 @@ function ComparisonRow({
   return (
     <tr className="border-b border-gray-100 last:border-0">
       <td className="py-2.5 pr-4 text-xs font-medium text-gray-600 sm:text-sm">{label}</td>
-      <td className={`py-2.5 px-4 text-right text-xs tabular-nums sm:text-sm ${shopifyWins ? "font-semibold text-blue-600" : "text-gray-500"}`}>
-        {fmt(shopifyValue)}
-      </td>
-      <td className={`py-2.5 pl-4 text-right text-xs tabular-nums sm:text-sm ${ratioWins ? "font-semibold text-emerald-600" : "text-gray-500"}`}>
+      <td className={`py-2.5 px-4 text-right text-xs tabular-nums sm:text-sm ${ratioWins ? "font-semibold text-emerald-600" : "text-gray-500"}`}>
         {fmt(ratioValue)}
+      </td>
+      <td className={`py-2.5 pl-4 text-right text-xs tabular-nums sm:text-sm ${shopifyWins ? "font-semibold text-blue-600" : "text-gray-500"}`}>
+        {fmt(shopifyValue)}
       </td>
     </tr>
   );
@@ -160,14 +160,14 @@ function SplitTable({
               <th className="pb-2 pr-4 text-[10px] font-medium uppercase tracking-wider text-gray-400 sm:text-xs" />
               <th className="pb-2 px-4 text-right text-[10px] font-medium uppercase tracking-wider text-gray-400 sm:text-xs" colSpan={2}>
                 <span className="inline-flex items-center gap-1.5">
-                  <span className="h-1.5 w-1.5 rounded-full bg-blue-500 inline-block" />
-                  Shopify
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 inline-block" />
+                  Ratio
                 </span>
               </th>
               <th className="pb-2 pl-4 text-right text-[10px] font-medium uppercase tracking-wider text-gray-400 sm:text-xs" colSpan={2}>
                 <span className="inline-flex items-center gap-1.5">
-                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 inline-block" />
-                  Ratio
+                  <span className="h-1.5 w-1.5 rounded-full bg-blue-500 inline-block" />
+                  Shopify
                 </span>
               </th>
             </tr>
@@ -184,16 +184,16 @@ function SplitTable({
                     {label}
                   </td>
                   <td className="py-2 px-2 text-right text-xs tabular-nums text-gray-500 sm:text-sm">
-                    {sVal.toLocaleString("en-IN")}
-                  </td>
-                  <td className="py-2 px-2 text-right text-[10px] tabular-nums text-gray-400 sm:text-xs">
-                    ({sPct.toFixed(1)}%)
-                  </td>
-                  <td className="py-2 px-2 text-right text-xs tabular-nums text-gray-500 sm:text-sm">
                     {rVal.toLocaleString("en-IN")}
                   </td>
-                  <td className="py-2 pl-2 text-right text-[10px] tabular-nums text-gray-400 sm:text-xs">
+                  <td className="py-2 px-2 text-right text-[10px] tabular-nums text-gray-400 sm:text-xs">
                     ({rPct.toFixed(1)}%)
+                  </td>
+                  <td className="py-2 px-2 text-right text-xs tabular-nums text-gray-500 sm:text-sm">
+                    {sVal.toLocaleString("en-IN")}
+                  </td>
+                  <td className="py-2 pl-2 text-right text-[10px] tabular-nums text-gray-400 sm:text-xs">
+                    ({sPct.toFixed(1)}%)
                   </td>
                 </tr>
               );
@@ -208,6 +208,64 @@ function SplitTable({
 /* ------------------------------------------------------------------ */
 /*  Main section                                                       */
 /* ------------------------------------------------------------------ */
+
+function Shimmer({ className = "" }: { className?: string }) {
+  return (
+    <span className={`inline-block animate-pulse rounded bg-gray-200 ${className}`}>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    </span>
+  );
+}
+
+function ShimmerRow({ label }: { label: string }) {
+  return (
+    <tr className="border-b border-gray-100 last:border-0">
+      <td className="py-2.5 pr-4 text-xs font-medium text-gray-600 sm:text-sm">{label}</td>
+      <td className="py-2.5 px-4 text-right"><Shimmer className="w-12 h-4" /></td>
+      <td className="py-2.5 pl-4 text-right"><Shimmer className="w-12 h-4" /></td>
+    </tr>
+  );
+}
+
+function ShimmerSplitTable({ title, labels }: { title: string; labels: string[] }) {
+  return (
+    <div>
+      <h4 className="mb-2 text-xs font-semibold text-gray-500 sm:text-sm">{title}</h4>
+      <div className="overflow-x-auto">
+        <table className="w-full text-left">
+          <thead>
+            <tr className="border-b border-gray-200">
+              <th className="pb-2 pr-4 text-[10px] font-medium uppercase tracking-wider text-gray-400 sm:text-xs" />
+              <th className="pb-2 px-4 text-right text-[10px] font-medium uppercase tracking-wider text-gray-400 sm:text-xs" colSpan={2}>
+                <span className="inline-flex items-center gap-1.5">
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 inline-block" />
+                  Ratio
+                </span>
+              </th>
+              <th className="pb-2 pl-4 text-right text-[10px] font-medium uppercase tracking-wider text-gray-400 sm:text-xs" colSpan={2}>
+                <span className="inline-flex items-center gap-1.5">
+                  <span className="h-1.5 w-1.5 rounded-full bg-blue-500 inline-block" />
+                  Shopify
+                </span>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {labels.map((label) => (
+              <tr key={label} className="border-b border-gray-50 last:border-0">
+                <td className="py-2 pr-4 text-xs font-medium text-gray-600 sm:text-sm capitalize">{label}</td>
+                <td className="py-2 px-2 text-right"><Shimmer className="w-10 h-4" /></td>
+                <td className="py-2 px-2 text-right"><Shimmer className="w-10 h-4" /></td>
+                <td className="py-2 px-2 text-right"><Shimmer className="w-10 h-4" /></td>
+                <td className="py-2 pl-2 text-right"><Shimmer className="w-10 h-4" /></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
 
 function formatPct(n: number): string {
   return n.toFixed(1) + "%";
@@ -232,9 +290,22 @@ export function PerformanceMetricsSection({ comparison }: { comparison: ABCompar
     cartAbandonmentRate,
     checkoutAbandonmentRate,
     isLoading,
+    isLoadingSession,
+    isLoadingOrders,
   } = usePerformanceMetrics(comparison);
 
-  if (isLoading) {
+  const sm = sessionMetrics;
+  const om = orderMetrics;
+  const hasTrends = sessionTrends && (sessionTrends.pagesPerSession.length > 0);
+  const hasOrderData = om?.shopify && om?.ratio;
+
+  // Only return null when everything is done loading and there's no data at all
+  if (!isLoading && !hasTrends && !hasOrderData && !cartAbandonmentRate) {
+    return null;
+  }
+
+  // Show nothing only if everything is still loading and we have zero data
+  if (isLoading && !hasTrends && !hasOrderData && !cartAbandonmentRate && !sm) {
     return (
       <Card>
         <CardContent className="flex items-center justify-center py-12">
@@ -243,15 +314,6 @@ export function PerformanceMetricsSection({ comparison }: { comparison: ABCompar
         </CardContent>
       </Card>
     );
-  }
-
-  const sm = sessionMetrics;
-  const om = orderMetrics;
-  const hasTrends = sessionTrends && (sessionTrends.pagesPerSession.length > 0);
-  const hasOrderData = om?.shopify && om?.ratio;
-
-  if (!hasTrends && !hasOrderData && !cartAbandonmentRate) {
-    return null;
   }
 
   return (
@@ -302,7 +364,7 @@ export function PerformanceMetricsSection({ comparison }: { comparison: ABCompar
       )}
 
       {/* Checkout & Order Metrics — comparison table */}
-      {(cartAbandonmentRate || hasOrderData) && (
+      {(cartAbandonmentRate || hasOrderData || isLoadingOrders || isLoadingSession) && (
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-semibold">Checkout & Order Metrics</CardTitle>
@@ -318,14 +380,14 @@ export function PerformanceMetricsSection({ comparison }: { comparison: ABCompar
                     </th>
                     <th className="pb-2 px-4 text-right text-[10px] font-medium uppercase tracking-wider text-gray-400 sm:text-xs">
                       <span className="inline-flex items-center gap-1.5">
-                        <span className="h-1.5 w-1.5 rounded-full bg-blue-500 inline-block" />
-                        Shopify
+                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 inline-block" />
+                        Ratio
                       </span>
                     </th>
                     <th className="pb-2 pl-4 text-right text-[10px] font-medium uppercase tracking-wider text-gray-400 sm:text-xs">
                       <span className="inline-flex items-center gap-1.5">
-                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 inline-block" />
-                        Ratio
+                        <span className="h-1.5 w-1.5 rounded-full bg-blue-500 inline-block" />
+                        Shopify
                       </span>
                     </th>
                   </tr>
@@ -349,7 +411,7 @@ export function PerformanceMetricsSection({ comparison }: { comparison: ABCompar
                       lowerIsBetter
                     />
                   )}
-                  {hasOrderData && (
+                  {hasOrderData ? (
                     <>
                       <ComparisonRow
                         label="Items / Order"
@@ -372,8 +434,14 @@ export function PerformanceMetricsSection({ comparison }: { comparison: ABCompar
                         lowerIsBetter
                       />
                     </>
-                  )}
-                  {sm?.shopify?.totals && sm?.ratio?.totals && (
+                  ) : isLoadingOrders ? (
+                    <>
+                      <ShimmerRow label="Items / Order" />
+                      <ShimmerRow label="Discount Usage" />
+                      <ShimmerRow label="Avg Discount Amount" />
+                    </>
+                  ) : null}
+                  {sm?.shopify?.totals && sm?.ratio?.totals ? (
                     <>
                       <ComparisonRow
                         label="Pages / Session"
@@ -395,7 +463,13 @@ export function PerformanceMetricsSection({ comparison }: { comparison: ABCompar
                         lowerIsBetter
                       />
                     </>
-                  )}
+                  ) : isLoadingSession ? (
+                    <>
+                      <ShimmerRow label="Pages / Session" />
+                      <ShimmerRow label="Avg Session Duration" />
+                      <ShimmerRow label="Bounce Rate" />
+                    </>
+                  ) : null}
                 </tbody>
               </table>
             </div>
@@ -404,14 +478,14 @@ export function PerformanceMetricsSection({ comparison }: { comparison: ABCompar
       )}
 
       {/* Breakdown Tables — Device, Payment, Customer type */}
-      {(sm?.shopify?.deviceSplit || hasOrderData) && (
+      {(sm?.shopify?.deviceSplit || hasOrderData || isLoadingOrders || isLoadingSession) && (
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-semibold">Breakdowns</CardTitle>
             <p className="text-xs text-gray-500">Category-wise A vs B split</p>
           </CardHeader>
           <CardContent className="space-y-6">
-            {sm?.shopify?.deviceSplit && sm?.ratio?.deviceSplit && (
+            {sm?.shopify?.deviceSplit && sm?.ratio?.deviceSplit ? (
               <SplitTable
                 title="Device Breakup"
                 shopifyData={sm.shopify.deviceSplit.map((d) => ({
@@ -423,9 +497,11 @@ export function PerformanceMetricsSection({ comparison }: { comparison: ABCompar
                   value: d.sessions,
                 }))}
               />
-            )}
+            ) : isLoadingSession ? (
+              <ShimmerSplitTable title="Device Breakup" labels={["Desktop", "Mobile", "Tablet"]} />
+            ) : null}
 
-            {hasOrderData && (
+            {hasOrderData ? (
               <>
                 <SplitTable
                   title="Prepaid vs COD"
@@ -439,18 +515,23 @@ export function PerformanceMetricsSection({ comparison }: { comparison: ABCompar
                   ]}
                 />
                 <SplitTable
-                  title="New vs Returning Customers"
+                  title="First vs Repeat Buyers"
                   shopifyData={[
-                    { label: "New", value: om!.shopify.newCustomerOrders },
-                    { label: "Returning", value: om!.shopify.returningCustomerOrders },
+                    { label: "First", value: om!.shopify.newCustomerOrders },
+                    { label: "Repeat", value: om!.shopify.returningCustomerOrders },
                   ]}
                   ratioData={[
-                    { label: "New", value: om!.ratio.newCustomerOrders },
-                    { label: "Returning", value: om!.ratio.returningCustomerOrders },
+                    { label: "First", value: om!.ratio.newCustomerOrders },
+                    { label: "Repeat", value: om!.ratio.returningCustomerOrders },
                   ]}
                 />
               </>
-            )}
+            ) : isLoadingOrders ? (
+              <>
+                <ShimmerSplitTable title="Prepaid vs COD" labels={["Prepaid", "COD"]} />
+                <ShimmerSplitTable title="First vs Repeat Buyers" labels={["First", "Repeat"]} />
+              </>
+            ) : null}
           </CardContent>
         </Card>
       )}

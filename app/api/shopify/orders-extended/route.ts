@@ -18,6 +18,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ data: { shopify, ratio } });
   } catch (e: unknown) {
     const message = e instanceof Error ? e.message : "Unknown error";
+    console.error("[orders-extended] Error:", message, e);
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }

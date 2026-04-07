@@ -64,17 +64,17 @@ export function SplitMetricCard({ title, shopifyData, ratioData }: SplitMetricCa
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
             <div className="mb-2 flex items-center gap-1.5">
-              <div className="h-1.5 w-1.5 rounded-full bg-blue-500 sm:h-2 sm:w-2" />
-              <span className="text-[9px] font-medium uppercase text-gray-400 sm:text-[10px]">Shopify</span>
-            </div>
-            <SplitBar items={shopifyData} color="blue" />
-          </div>
-          <div>
-            <div className="mb-2 flex items-center gap-1.5">
               <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 sm:h-2 sm:w-2" />
               <span className="text-[9px] font-medium uppercase text-gray-400 sm:text-[10px]">Ratio</span>
             </div>
             <SplitBar items={ratioData} color="emerald" />
+          </div>
+          <div>
+            <div className="mb-2 flex items-center gap-1.5">
+              <div className="h-1.5 w-1.5 rounded-full bg-blue-500 sm:h-2 sm:w-2" />
+              <span className="text-[9px] font-medium uppercase text-gray-400 sm:text-[10px]">Shopify</span>
+            </div>
+            <SplitBar items={shopifyData} color="blue" />
           </div>
         </div>
       </CardContent>

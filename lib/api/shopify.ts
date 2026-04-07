@@ -455,6 +455,7 @@ export async function fetchShopifyOrdersExtended(
           cursor
           node {
             id
+            createdAt
             tags
             lineItems(first: 50) {
               edges {
@@ -463,7 +464,7 @@ export async function fetchShopifyOrdersExtended(
             }
             discountCodes
             currentTotalDiscountsSet { shopMoney { amount } }
-            customer { numberOfOrders }
+            customer { createdAt }
           }
         }
         pageInfo { hasNextPage }
@@ -492,8 +493,9 @@ export async function fetchShopifyOrdersExtended(
 
     for (const edge of edges) {
       const node = edge.node as Record<string, unknown>;
-      totalOrders++;
       cursor = edge.cursor;
+      if (!node) continue;
+      totalOrders++;
 
       // Items per order
       const lineItemsObj = node.lineItems as { edges?: Array<{ node: { quantity: number } }> } | undefined;
@@ -517,15 +519,23 @@ export async function fetchShopifyOrdersExtended(
       else if (tags.includes("prepaid")) prepaidOrders++;
       else prepaidOrders++; // default to prepaid if neither tag present
 
-      // New vs returning
-      const customer = node.customer as { numberOfOrders?: number } | undefined;
-      const customerOrders = Number(customer?.numberOfOrders) || 0;
-      if (customerOrders <= 1) newCustomerOrders++;
-      else returningCustomerOrders++;
+      // New vs returning — if the customer account was created on an earlier
+      // date than the order, this is a repeat purchase.  Same-day or guest
+      // orders count as first-time / new.
+      const customer = node.customer as { createdAt?: string } | undefined;
+      const orderDate = String(node.createdAt ?? "").slice(0, 10);
+      const customerDate = customer?.createdAt?.slice(0, 10);
+      if (customerDate && customerDate < orderDate) {
+        returningCustomerOrders++;
+      } else {
+        newCustomerOrders++;
+      }
     }
 
     hasNext = (ordersData?.pageInfo as { hasNextPage?: boolean })?.hasNextPage || false;
   }
+
+  console.log(`[orders-extended][${variant}] total=${totalOrders} firstTime=${newCustomerOrders} repeat=${returningCustomerOrders} prepaid=${prepaidOrders} cod=${codOrders}`);
 
   return {
     totalOrders,
@@ -639,6 +649,7 @@ export async function fetchRatioOrdersByLandingPage(
     for (const edge of edges) {
       const node = edge.node;
       cursor = edge.cursor;
+      if (!node) continue;
 
       const price = parseFloat(node.totalPriceSet?.shopMoney?.amount || "0");
 
@@ -736,6 +747,7 @@ export async function fetchShopifyOrdersByLandingPage(
     for (const edge of edges) {
       const node = edge.node;
       cursor = edge.cursor;
+      if (!node) continue;
 
       const price = parseFloat(node.totalPriceSet?.shopMoney?.amount || "0");
 

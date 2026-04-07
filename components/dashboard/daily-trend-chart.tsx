@@ -65,22 +65,22 @@ function TrendChart({
           <Legend
             formatter={(value) => (
               <span className="text-xs">
-                {value === "shopify" ? "Shopify (A)" : "Ratio (B)"}
+                {value === "ratio" ? "Ratio" : "Shopify"}
               </span>
             )}
           />
           <Line
             type="monotone"
-            dataKey="shopify"
-            stroke={VARIANT_COLORS.shopify}
+            dataKey="ratio"
+            stroke={VARIANT_COLORS.ratio}
             strokeWidth={2}
             dot={{ r: 2 }}
             activeDot={{ r: 4 }}
           />
           <Line
             type="monotone"
-            dataKey="ratio"
-            stroke={VARIANT_COLORS.ratio}
+            dataKey="shopify"
+            stroke={VARIANT_COLORS.shopify}
             strokeWidth={2}
             dot={{ r: 2 }}
             activeDot={{ r: 4 }}
